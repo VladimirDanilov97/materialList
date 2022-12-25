@@ -13,6 +13,7 @@ sheet = Table('sheet', metadata,
                Column('sheet_id', Integer, primary_key=True),
                Column('width', Integer),
                Column('length', Integer),
+               Column('thickness', Integer),
                Column('material', String),
                Column('amount', Integer),
                Column('product', ForeignKey('products.product_id')))
