@@ -1,61 +1,88 @@
 from sqlalchemy import Table, MetaData, Column, String, Integer, ForeignKey, create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, relationship
 
-metadata = MetaData()
+Base = declarative_base()
+engine = create_engine(f"sqlite:///material_list.db", echo=True, future=True)
 
-engine = create_engine(f"sqlite:///material_list.db")
+class products(Base):
+    __tablename__ = 'products'
+    id = Column(Integer, primary_key=True)
+    name =  Column('name', String)
+    part_of = ForeignKey('products.id') 
+    
+    sheets = relationship('sheets', backref='sheets')
+    tubes = relationship('tubes', backref='tubes')
 
-products = Table('products', metadata,
-                Column('product_id', Integer, primary_key=True),
-                Column('product_name', String, ),
-                )
+    def __repr__(self) -> str:
+        return f'{self.name}'
 
-sheet = Table('sheets', metadata,
-               Column('sheet_id', Integer, primary_key=True),
-               Column('width', Integer),
-               Column('length', Integer),
-               Column('thickness', Integer),
-               Column('material', String),
-               Column('amount', Integer),
-               )
+class sheets(Base):
+    __tablename__ = 'sheets'
+    id = Column(Integer, primary_key=True)
+    product_id = Column(ForeignKey('products.id'))
+    width = Column('width', Integer, nullable=True)
+    length = Column('length', Integer, nullable=True)
+    diameter = Column('diameter', Integer, nullable=True)
+    thickness = Column('thickness', Integer, nullable=True)
+    material = Column('material', String)
+    amount = Column('amount', Integer)
 
-tube = Table('tubes', metadata,
-               Column('sheet_id', Integer, primary_key=True),
-               Column('diameter', Integer),
-               Column('thickness', Integer),
-               Column('length', Integer),
-               Column('material', String),
-               Column('amount', Integer),
-               )
+    def __repr__(self) -> str:
+        if self.width:
+            return f'{self.width}x{self.length}x{self.thickness}, {self.material}'
+        if self.diameter:
+            return f'{self.diameter}x{self.thickness}, {self.material}'
 
-nuckle = Table('nuckles', metadata,    
-               Column('nuckle_id', Integer, primary_key=True),
-               Column('diameter', Integer), 
-               Column('material', String),
-               )
+class tubes(Base):
+    __tablename__ = 'tubes'
+    id = Column(Integer, primary_key=True)
+    product_id = Column(ForeignKey('products.id'))
+    length = Column('length', Integer)
+    diameter = Column('diameter', Integer)
+    thickness = Column('thickness', Integer)
+    material = Column('material', String)
+    amount = Column('amount', Integer)
 
-bolt = Table('bolts', metadata,    
-               Column('bolt_id', Integer, primary_key=True),
-               Column('diameter', Integer), 
-               Column('length', Integer), 
-               Column('material', String),
-               )
+    def __repr__(self) -> str:
+        return f'{self.diameter}x{self.thickness}x{self.length}, {self.material}'
 
-flange = Table('flange', metadata,    
-               Column('flange_id', Integer, primary_key=True),
-               Column('diameter', Integer), 
-               Column('pressure', Integer),
-               Column('inner diameter', Integer),
-               Column('pressure', Integer),
-               Column('material', String),
-               )
+class nuts(Base):
+    __tablename__ = 'nuts'
+    id = Column(Integer, primary_key=True)
+    product_id = Column(ForeignKey('products.id'))
+    diameter = Column('diameter', Integer)
+    material = Column('material', String)
+    amount = Column('amount', Integer)
 
+    def __repr__(self) -> str:
+        return f'{self.diameter}, {self.material}'
+
+class bolts(Base):
+    __tablename__ = 'bolts'
+    id = Column(Integer, primary_key=True)
+    product_id = Column(ForeignKey('products.id'))
+    length = Column('length', Integer)
+    diameter = Column('diameter', Integer)
+    material = Column('material', String)
+    amount = Column('amount', Integer)
+
+    def __repr__(self) -> str:
+        return f'{self.diameter}x{self.length}, {self.material}'
+
+class flanges(Base):
+    __tablename__ = 'flanges'
+    id = Column(Integer, primary_key=True)
+    product_id = Column(ForeignKey('products.id'))
+    diameter = Column('diameter', Integer)
+    pressure = Column('pressure', Integer)
+    inner_diameter = Column('inner_diameter', Integer)
+    material = Column('material', String)
+    amount = Column('amount', Integer)
+
+    def __repr__(self) -> str:
+        return f'{self.diameter}x{self.pressure}x{self.inner_diameter}, {self.material}'
 
 if __name__ == '__main__':
-    metadata.drop_all(engine)
-    metadata.create_all(engine)
-    stmt = products.insert().values(product_name='foo')
-    with engine.connect() as conn:
-        conn.execute(stmt)
-       
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
    
