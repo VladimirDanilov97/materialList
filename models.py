@@ -8,7 +8,7 @@ class products(Base):
     __tablename__ = 'products'
     id = Column(Integer, primary_key=True)
     name =  Column('name', String)
-    part_of = ForeignKey('products.id') 
+    part_of = Column(ForeignKey('products.id')) 
     
     sheets = relationship('sheets', backref='sheets')
     tubes = relationship('tubes', backref='tubes')
