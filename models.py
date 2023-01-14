@@ -4,7 +4,7 @@ from sqlalchemy.orm import declarative_base, relationship
 Base = declarative_base()
 engine = create_engine(f"sqlite:///material_list.db", echo=True, future=True)
 
-class products(Base):
+class Products(Base):
     __tablename__ = 'products'
     id = Column(Integer, primary_key=True)
     name =  Column('name', String)
@@ -16,7 +16,7 @@ class products(Base):
     def __repr__(self) -> str:
         return f'{self.name}'
 
-class sheets(Base):
+class Sheets(Base):
     __tablename__ = 'sheets'
     id = Column(Integer, primary_key=True)
     product_id = Column(ForeignKey('products.id'))
@@ -33,7 +33,7 @@ class sheets(Base):
         if self.diameter:
             return f'{self.diameter}x{self.thickness}, {self.material}'
 
-class tubes(Base):
+class Tubes(Base):
     __tablename__ = 'tubes'
     id = Column(Integer, primary_key=True)
     product_id = Column(ForeignKey('products.id'))
@@ -46,7 +46,7 @@ class tubes(Base):
     def __repr__(self) -> str:
         return f'{self.diameter}x{self.thickness}x{self.length}, {self.material}'
 
-class nuts(Base):
+class Nuts(Base):
     __tablename__ = 'nuts'
     id = Column(Integer, primary_key=True)
     product_id = Column(ForeignKey('products.id'))
@@ -57,7 +57,7 @@ class nuts(Base):
     def __repr__(self) -> str:
         return f'{self.diameter}, {self.material}'
 
-class bolts(Base):
+class Bolts(Base):
     __tablename__ = 'bolts'
     id = Column(Integer, primary_key=True)
     product_id = Column(ForeignKey('products.id'))
@@ -69,7 +69,7 @@ class bolts(Base):
     def __repr__(self) -> str:
         return f'{self.diameter}x{self.length}, {self.material}'
 
-class flanges(Base):
+class Flanges(Base):
     __tablename__ = 'flanges'
     id = Column(Integer, primary_key=True)
     product_id = Column(ForeignKey('products.id'))
